@@ -30,7 +30,10 @@ function scheduler() {
     }
 }
 
-function toggleMetronome() {
+async function toggleMetronome() {
+    if (audioContext.state === 'suspended') {
+        await audioContext.resume();  // Fix for iOS requiring user interaction
+    }
     if (!isPlaying) {
         nextNoteTime = audioContext.currentTime;
         isPlaying = true;
