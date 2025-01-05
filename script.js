@@ -1,4 +1,4 @@
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let audioContext;
 let nextNoteTime = 0.0;
 let tempo = 120;
 let isPlaying = false;
@@ -8,10 +8,17 @@ bpmInput.addEventListener("input", () => {
     tempo = parseInt(bpmInput.value);
 });
 
+function initializeAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
 function playClick() {
+    if (!audioContext) return; // Ensure the context is ready
     const osc = audioContext.createOscillator();
     const envelope = audioContext.createGain();
-    osc.frequency.value = 1000; 
+    osc.frequency.value = 1000;
     envelope.gain.value = 1;
     osc.connect(envelope);
     envelope.connect(audioContext.destination);
@@ -31,8 +38,9 @@ function scheduler() {
 }
 
 async function toggleMetronome() {
+    initializeAudioContext();
     if (audioContext.state === 'suspended') {
-        await audioContext.resume();  // Fix for iOS requiring user interaction
+        await audioContext.resume(); // Activate sound context
     }
     if (!isPlaying) {
         nextNoteTime = audioContext.currentTime;
