@@ -10,15 +10,17 @@
 <body>
     <div class="container">
         <h1>メトロノーム</h1>
-        <div class="bpm-control">
-            <label for="bpmInput">BPM: </label>
+        <div class="bpm-display">
+            <label for="bpmInput">現在のBPM: </label>
             <input type="number" id="bpmInput" value="120">
+        </div>
+        <div class="bpm-buttons">
             <button onclick="adjustBPM(-5)">-5</button>
-            <button onclick="adjustBPM(-1)">-</button>
-            <button onclick="adjustBPM(1)">+</button>
+            <button onclick="adjustBPM(-1)">-1</button>
+            <button class="play-button" onclick="toggleMetronome()">スタート / ストップ</button>
+            <button onclick="adjustBPM(1)">+1</button>
             <button onclick="adjustBPM(5)">+5</button>
         </div>
-        <button class="play-button" onclick="toggleMetronome()">スタート / ストップ</button>
     </div>
     <script src="script.js"></script>
 </body>
