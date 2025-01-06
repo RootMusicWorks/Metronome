@@ -2,7 +2,6 @@ let audioContext = null;
 let nextNoteTime = 0.0;
 let tempo = 120;
 let isPlaying = false;
-let isFirstClick = true;
 let bpmInput = document.getElementById("bpmInput");
 
 bpmInput.addEventListener("input", () => {
@@ -18,24 +17,29 @@ function initializeAudioContext() {
     }
 }
 
-function playClick() {
-    if (!audioContext) return; // Ensure the context is initialized
+function playClick(isFirstBeat = false) {
+    if (!audioContext) return;
     const osc = audioContext.createOscillator();
     const envelope = audioContext.createGain();
+    
+    // First beat volume controlled separately for balance
     osc.frequency.value = 1000;
-    envelope.gain.value = isFirstClick ? 1 : 0.7; // Adjust the first click to be louder
+    envelope.gain.value = isFirstBeat ? 0.8 : 0.7;
     osc.connect(envelope);
     envelope.connect(audioContext.destination);
+    
     osc.start(nextNoteTime);
+    envelope.gain.setValueAtTime(envelope.gain.value, nextNoteTime); 
     envelope.gain.exponentialRampToValueAtTime(0.001, nextNoteTime + 0.1);
     osc.stop(nextNoteTime + 0.1);
-    isFirstClick = false; // Reset after the first beat
 }
 
 function scheduler() {
+    let isFirstBeat = nextNoteTime === audioContext.currentTime;
     while (nextNoteTime < audioContext.currentTime + 0.1) {
-        playClick();
+        playClick(isFirstBeat);
         nextNoteTime += 60.0 / tempo;
+        isFirstBeat = false;
     }
     if (isPlaying) {
         requestAnimationFrame(scheduler);
@@ -44,9 +48,8 @@ function scheduler() {
 
 async function toggleMetronome() {
     initializeAudioContext();
-    isFirstClick = true; // Ensure the first click is adjusted on each start
     if (!isPlaying) {
-        nextNoteTime = audioContext.currentTime;
+        nextNoteTime = audioContext.currentTime + 0.05; // Small delay for stability
         isPlaying = true;
         scheduler();
     } else {
