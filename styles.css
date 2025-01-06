@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-    max-width: 400px;
+    max-width: 350px;
     margin: 0 auto;
 }
 
@@ -16,25 +16,28 @@ body {
 input[type="number"] {
     width: 80px;
     padding: 5px;
+    text-align: center;
 }
 
 .bpm-buttons {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 5px;
     margin-top: 20px;
 }
 
 button {
+    flex: 1;
     padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
     cursor: pointer;
 }
 
 .play-button {
-    background-color: #4CAF50;
+    background-color: #f44336;
     color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 15px;
-    font-size: 18px;
 }
