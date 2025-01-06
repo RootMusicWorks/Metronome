@@ -1,4 +1,4 @@
-let audioContext;
+let audioContext = null;
 let nextNoteTime = 0.0;
 let tempo = 120;
 let isPlaying = false;
@@ -12,10 +12,13 @@ function initializeAudioContext() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
 }
 
 function playClick() {
-    if (!audioContext) return; // Ensure the context is ready
+    if (!audioContext) return; // Ensure the context is initialized
     const osc = audioContext.createOscillator();
     const envelope = audioContext.createGain();
     osc.frequency.value = 1000;
@@ -38,10 +41,7 @@ function scheduler() {
 }
 
 async function toggleMetronome() {
-    initializeAudioContext();
-    if (audioContext.state === 'suspended') {
-        await audioContext.resume(); // Activate sound context
-    }
+    initializeAudioContext(); // Ensure audio context is ready on button press
     if (!isPlaying) {
         nextNoteTime = audioContext.currentTime;
         isPlaying = true;
